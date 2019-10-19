@@ -9,14 +9,14 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-SOURCES := clock.cpp
+SOURCES := array.cpp
 
 # header files in this project
-HEADERS := draw.hpp coordinates.hpp clock.hpp button.hpp
+HEADERS := array.hpp
 
 # other places to look for files for this project
 SEARCH  := 
 
 # set RELATIVE to the next higher directory and defer to the Makefile.due
 RELATIVE := $(RELATIVE)../
-include $(RELATIVE)Makefile.due
+include $(RELATIVE)Makefile.native

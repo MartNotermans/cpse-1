@@ -2,7 +2,7 @@
 #include "coordinates.hpp"
 #include "clock.hpp"
 #include "draw.hpp"
-
+#include "button.hpp"
 
 int main( void ){	
     // wait for the PC console to start
@@ -10,6 +10,16 @@ int main( void ){
    
     constexpr coordinates cords;
     
+    
+	auto gnd    = hwlib::target::pin_out( hwlib::target::pins::d6 );
+    auto vcc    = hwlib::target::pin_out( hwlib::target::pins::d7 );
+    gnd.write( 0 );
+    vcc.write( 1 );
+    gnd.flush();
+    vcc.flush();
+
+    auto bt1_input 	= hwlib::target::pin_in ( hwlib::target::pins::d3 );
+    auto bt2_input 	= hwlib::target::pin_in ( hwlib::target::pins::d4 );
 
     namespace target = hwlib::target;
     auto scl = target::pin_oc( target::pins::scl );
@@ -21,7 +31,44 @@ int main( void ){
 
     clock oledClock(cords, oled);
     
-    int time[2] = {9,30};
+    button buttons(bt1_input, bt2_input);
+
+    int time[2] = {0,15};
     oledClock.update(time);
+
+    // for(;;){
+    //     hwlib::cout<<buttons.update_bt1()<<";"<<buttons.update_bt2()<<hwlib::endl;
+    // }
+
+
+    for(;;){
+        for(int i = 0; i < 100; i++){
+            if(buttons.update_bt1() ){
+                time[0]++;
+                
+                oledClock.update(time);
+                hwlib::wait_ms(100);
+            }
+            if(time[0] > 11){
+                time[0] = 0;
+            }
+
+            if(buttons.update_bt2() ){
+                time[1]++;
+                
+                oledClock.update(time);
+                hwlib::wait_ms(100);
+            }
+            if(time[1] > 59){
+                time[1] = 0;
+            }
+
+            hwlib::wait_ms(10);
+        }
+        hwlib::cout<<time[0]<<":"<<time[1]<<hwlib::endl;
+        
+    }
+    
+    
 }
 
